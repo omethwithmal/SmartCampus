@@ -43,14 +43,19 @@ import {
   Zap as QuickIcon,
   RefreshCw,
   Clock,
-  Gauge
+  Gauge,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 const LectureHallsAnalyzeDashboard = () => {
   // State for sidebar active tab
   const [activeTab, setActiveTab] = useState('lecture-halls');
   
-  // State for filtering
+  // Theme state for 4 themes
+  const [theme, setTheme] = useState('emerald');
+  const isDarkTheme = theme !== 'light';
+  
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -195,6 +200,145 @@ const LectureHallsAnalyzeDashboard = () => {
     },
     description: ''
   });
+
+  // Theme change function
+  const changeTheme = (newTheme) => {
+    setTheme(newTheme);
+  };
+
+  // Helper for dynamic accent colors to avoid Tailwind purging issues for dynamic strings
+  const getDynamicColorClasses = (baseStr) => {
+    if (theme === 'emerald') return baseStr; 
+    if (theme === 'light') return baseStr.replace(/emerald/g, 'emerald'); 
+    if (theme === 'ocean') return baseStr.replace(/emerald/g, 'blue').replace(/green/g, 'indigo');
+    if (theme === 'sunset') return baseStr.replace(/emerald/g, 'orange').replace(/green/g, 'red');
+    if (theme === 'purple') return baseStr.replace(/emerald/g, 'purple').replace(/green/g, 'fuchsia');
+    return baseStr;
+  };
+
+  // Dynamic theme classes
+  const getThemeClasses = (currentTheme) => {
+    switch (currentTheme) {
+      case 'light':
+        return {
+          container: 'bg-gray-50',
+          sidebar: 'bg-white/80 border-emerald-200 shadow-lg',
+          sidebarText: 'text-emerald-700/60',
+          card: 'bg-white/80 border-emerald-200 shadow-md',
+          cardHover: 'hover:border-emerald-300',
+          text: 'text-gray-800',
+          textSecondary: 'text-emerald-600/70',
+          border: 'border-emerald-200',
+          input: 'bg-white border-emerald-300 text-gray-800 focus:ring-emerald-500',
+          buttonPrimary: 'bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white',
+          buttonSecondary: 'border-emerald-300 text-emerald-600 hover:bg-emerald-50',
+          tableHeader: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+          tableRow: 'border-emerald-100 hover:bg-emerald-50/50',
+          badgeAvailable: 'bg-emerald-100 text-emerald-700',
+          badgeBooked: 'bg-amber-100 text-amber-700',
+          badgeMaintenance: 'bg-rose-100 text-rose-700',
+          accent: 'emerald',
+          accentColor: 'text-emerald-600',
+          accentBg: 'bg-emerald-500/20',
+          accentBorder: 'border-emerald-500/30'
+        };
+      case 'ocean':
+        return {
+          container: 'bg-[#020617]',
+          sidebar: 'bg-[#0f172a]/80 border-blue-500/20 shadow-lg shadow-blue-900/20',
+          sidebarText: 'text-blue-300/60',
+          card: 'bg-[#0f172a]/60 border-blue-500/20',
+          cardHover: 'hover:border-blue-500/40',
+          text: 'text-white',
+          textSecondary: 'text-blue-300/50',
+          border: 'border-blue-500/20',
+          input: 'bg-black/30 border-blue-500/30 text-white focus:ring-blue-500',
+          buttonPrimary: 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white',
+          buttonSecondary: 'border-blue-500/30 text-blue-300/70 hover:bg-blue-500/10',
+          tableHeader: 'border-blue-500/20 bg-blue-900/20 text-blue-300',
+          tableRow: 'border-blue-500/10 hover:bg-blue-500/5',
+          badgeAvailable: 'bg-blue-500/20 text-blue-400',
+          badgeBooked: 'bg-amber-500/20 text-amber-400',
+          badgeMaintenance: 'bg-rose-500/20 text-rose-400',
+          accent: 'blue',
+          accentColor: 'text-blue-400',
+          accentBg: 'bg-blue-500/20',
+          accentBorder: 'border-blue-500/30'
+        };
+      case 'sunset':
+        return {
+          container: 'bg-[#1a0b02]',
+          sidebar: 'bg-[#2a1304]/80 border-orange-500/20 shadow-lg shadow-orange-900/20',
+          sidebarText: 'text-orange-300/60',
+          card: 'bg-[#2a1304]/60 border-orange-500/20',
+          cardHover: 'hover:border-orange-500/40',
+          text: 'text-white',
+          textSecondary: 'text-orange-300/50',
+          border: 'border-orange-500/20',
+          input: 'bg-black/30 border-orange-500/30 text-white focus:ring-orange-500',
+          buttonPrimary: 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white',
+          buttonSecondary: 'border-orange-500/30 text-orange-300/70 hover:bg-orange-500/10',
+          tableHeader: 'border-orange-500/20 bg-orange-900/20 text-orange-300',
+          tableRow: 'border-orange-500/10 hover:bg-orange-500/5',
+          badgeAvailable: 'bg-orange-500/20 text-orange-400',
+          badgeBooked: 'bg-amber-500/20 text-amber-400',
+          badgeMaintenance: 'bg-rose-500/20 text-rose-400',
+          accent: 'orange',
+          accentColor: 'text-orange-400',
+          accentBg: 'bg-orange-500/20',
+          accentBorder: 'border-orange-500/30'
+        };
+      case 'purple':
+        return {
+          container: 'bg-[#0f0728]',
+          sidebar: 'bg-[#1c0f3d]/80 border-purple-500/20 shadow-lg shadow-purple-900/20',
+          sidebarText: 'text-purple-300/60',
+          card: 'bg-[#1c0f3d]/60 border-purple-500/20',
+          cardHover: 'hover:border-purple-500/40',
+          text: 'text-white',
+          textSecondary: 'text-purple-300/50',
+          border: 'border-purple-500/20',
+          input: 'bg-black/30 border-purple-500/30 text-white focus:ring-purple-500',
+          buttonPrimary: 'bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-500 hover:to-fuchsia-500 text-white',
+          buttonSecondary: 'border-purple-500/30 text-purple-300/70 hover:bg-purple-500/10',
+          tableHeader: 'border-purple-500/20 bg-purple-900/20 text-purple-300',
+          tableRow: 'border-purple-500/10 hover:bg-purple-500/5',
+          badgeAvailable: 'bg-purple-500/20 text-purple-400',
+          badgeBooked: 'bg-amber-500/20 text-amber-400',
+          badgeMaintenance: 'bg-rose-500/20 text-rose-400',
+          accent: 'purple',
+          accentColor: 'text-purple-400',
+          accentBg: 'bg-purple-500/20',
+          accentBorder: 'border-purple-500/30'
+        };
+      case 'emerald':
+      default:
+        return {
+          container: 'bg-[#020b08]',
+          sidebar: 'bg-[#041915]/80 border-emerald-500/20 shadow-lg shadow-emerald-900/20',
+          sidebarText: 'text-emerald-300/60',
+          card: 'bg-[#041915]/60 border-emerald-500/20',
+          cardHover: 'hover:border-emerald-500/40',
+          text: 'text-white',
+          textSecondary: 'text-emerald-300/50',
+          border: 'border-emerald-500/20',
+          input: 'bg-black/30 border-emerald-500/30 text-white focus:ring-emerald-500',
+          buttonPrimary: 'bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white',
+          buttonSecondary: 'border-emerald-500/30 text-emerald-300/70 hover:bg-emerald-500/10',
+          tableHeader: 'border-emerald-500/20 bg-emerald-900/20 text-emerald-300',
+          tableRow: 'border-emerald-500/10 hover:bg-emerald-500/5',
+          badgeAvailable: 'bg-emerald-500/20 text-emerald-400',
+          badgeBooked: 'bg-amber-500/20 text-amber-400',
+          badgeMaintenance: 'bg-rose-500/20 text-rose-400',
+          accent: 'emerald',
+          accentColor: 'text-emerald-400',
+          accentBg: 'bg-emerald-500/20',
+          accentBorder: 'border-emerald-500/30'
+        };
+    }
+  };
+
+  const themeClasses = getThemeClasses(theme);
 
   // Function to update real-time stats based on current data
   const updateRealTimeStats = () => {
@@ -732,7 +876,7 @@ ${recommendations}
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#020b08]">
+    <div className={`flex min-h-screen transition-colors duration-300 ${themeClasses.container}`}>
       {/* Toxic Warning Popup Modal */}
       {showToxicWarning && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
@@ -778,12 +922,12 @@ ${recommendations}
       )}
 
       {/* Fixed Left Sidebar - Glassmorphism */}
-      <aside className="fixed left-0 top-0 h-full w-80 bg-[#041915]/80 backdrop-blur-xl border-r border-emerald-500/20 z-20">
-        <div className="p-8 border-b border-emerald-500/20">
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-green-400 bg-clip-text text-transparent">
+      <aside className={`fixed left-0 top-0 h-full w-80 backdrop-blur-xl border-r z-20 transition-colors duration-300 ${themeClasses.sidebar}`}>
+        <div className={`p-8 border-b ${themeClasses.border}`}>
+          <h1 className={`text-2xl font-bold bg-clip-text text-transparent ${getDynamicColorClasses('bg-gradient-to-r from-emerald-400 to-green-400')}`}>
             Smart Campus
           </h1>
-          <p className="text-sm text-emerald-300/60 mt-2">AI Resource Intelligence</p>
+          <p className={`text-sm ${themeClasses.textSecondary} mt-2`}>AI Resource Intelligence</p>
         </div>
         
         <nav className="p-6 space-y-2">
@@ -802,10 +946,10 @@ ${recommendations}
                 }}
                 className={`w-full flex items-center gap-4 px-5 py-3 rounded-2xl transition-all duration-300 ${
                   isQuickAnalyze 
-                    ? 'bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/30 border border-emerald-400/50 hover:shadow-xl hover:scale-105' 
+                    ? `${getDynamicColorClasses('bg-gradient-to-r from-emerald-600 to-green-600 text-white shadow-lg shadow-emerald-500/30 border border-emerald-400/50 hover:shadow-xl hover:scale-105')}`
                     : activeTab === item.id 
-                      ? 'bg-emerald-500/20 text-emerald-400 shadow-lg shadow-emerald-500/10 border border-emerald-500/30' 
-                      : 'text-emerald-300/60 hover:bg-emerald-500/10 hover:text-emerald-300'
+                      ? `${themeClasses.accentBg} ${themeClasses.accentColor} shadow-lg shadow-black/10 border ${themeClasses.border}` 
+                      : `${themeClasses.sidebarText} hover:${themeClasses.accentBg} hover:${themeClasses.accentColor}`
                 }`}
               >
                 <Icon size={20} />
@@ -825,18 +969,60 @@ ${recommendations}
       {/* Main Content */}
       <main className="ml-80 flex-1 p-8">
         <div className="max-w-[1600px] mx-auto">
-          {/* Header with Date and Score Analytics */}
+          {/* Header with Date and Score Analytics and Theme Toggle */}
           <div className="flex justify-between items-start mb-8">
             <div>
-              <h2 className="text-3xl font-bold text-white tracking-tight">Lecture Halls Analyze Dashboard</h2>
-              <p className="text-emerald-300/50 mt-1">Tuesday, March 31, 2026</p>
+              <h2 className={`text-3xl font-bold tracking-tight ${themeClasses.text}`}>Lecture Halls Analyze Dashboard</h2>
+              <p className={`${themeClasses.textSecondary} mt-1`}>Tuesday, March 31, 2026</p>
             </div>
-            <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl px-6 py-3 border border-emerald-500/20">
-              <div className="text-sm text-emerald-300/60 font-medium">AI Performance Score</div>
-              <div className="text-4xl font-bold text-emerald-400 mt-1">98.4</div>
-              <div className="text-xs text-emerald-400/70 flex items-center justify-end gap-1 mt-1">
-                <TrendingUp size={12} />
-                +12% vs last week
+            <div className="flex gap-3 items-center">
+              {/* Theme Selector UI */}
+              <div className={`flex items-center gap-2 p-2 rounded-2xl backdrop-blur-md ${themeClasses.card} ${themeClasses.cardHover}`}>
+                <button
+                  onClick={() => changeTheme('light')}
+                  className={`p-2 rounded-xl transition-all duration-300 ${theme === 'light' ? 'bg-amber-100 text-amber-500 shadow-sm' : 'text-gray-400 hover:bg-slate-100 hover:text-amber-400'}`}
+                  title="Light Mode"
+                >
+                  <Sun size={18} />
+                </button>
+                <div className={`w-px h-6 ${isDarkTheme ? 'bg-white/10' : 'bg-gray-200'}`}></div>
+                <button
+                  onClick={() => changeTheme('emerald')}
+                  className={`p-2 rounded-xl transition-all duration-300 ${theme === 'emerald' ? 'bg-emerald-500/20 text-emerald-400 shadow-sm' : 'text-gray-500 hover:bg-emerald-500/10 hover:text-emerald-400'}`}
+                  title="Emerald Dark"
+                >
+                  <Moon size={18} />
+                </button>
+                <button
+                  onClick={() => changeTheme('ocean')}
+                  className={`p-2 rounded-xl transition-all duration-300 ${theme === 'ocean' ? 'bg-blue-500/20 text-blue-400 shadow-sm' : 'text-gray-500 hover:bg-blue-500/10 hover:text-blue-400'}`}
+                  title="Ocean Dark"
+                >
+                  <Wind size={18} />
+                </button>
+                <button
+                  onClick={() => changeTheme('sunset')}
+                  className={`p-2 rounded-xl transition-all duration-300 ${theme === 'sunset' ? 'bg-orange-500/20 text-orange-400 shadow-sm' : 'text-gray-500 hover:bg-orange-500/10 hover:text-orange-400'}`}
+                  title="Sunset Dark"
+                >
+                  <Zap size={18} />
+                </button>
+                <button
+                  onClick={() => changeTheme('purple')}
+                  className={`p-2 rounded-xl transition-all duration-300 ${theme === 'purple' ? 'bg-purple-500/20 text-purple-400 shadow-sm' : 'text-gray-500 hover:bg-purple-500/10 hover:text-purple-400'}`}
+                  title="Amethyst Dark"
+                >
+                  <Sparkles size={18} />
+                </button>
+              </div>
+              
+              <div className={`backdrop-blur-md rounded-2xl px-6 py-3 border ${themeClasses.card} ${themeClasses.cardHover}`}>
+                <div className={`text-sm ${themeClasses.textSecondary} font-medium`}>AI Performance Score</div>
+                <div className={`text-4xl font-bold ${themeClasses.accentColor} mt-1`}>98.4</div>
+                <div className={`text-xs ${themeClasses.accentColor} opacity-70 flex items-center justify-end gap-1 mt-1`}>
+                  <TrendingUp size={12} />
+                  +12% vs last week
+                </div>
               </div>
             </div>
           </div>
@@ -853,29 +1039,31 @@ ${recommendations}
                   { label: 'Booked', value: stats.bookedHalls, icon: Calendar, color: 'amber' },
                   { label: 'Maintenance', value: stats.maintenanceHalls, icon: Wrench, color: 'rose' }
                 ].map((kpi, idx) => (
-                  <div key={idx} className="bg-[#041915]/60 backdrop-blur-md rounded-2xl p-5 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-300 group">
+                  <div key={idx} className={`backdrop-blur-md rounded-2xl p-5 border transition-all duration-300 group ${themeClasses.card} ${themeClasses.cardHover} animate-stagger-${idx + 1}`}>
                     <div className="flex items-center justify-between mb-3">
-                      <div className={`w-10 h-10 bg-${kpi.color}-500/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                        <kpi.icon className={`text-${kpi.color}-400`} size={20} />
+                      <div className={`w-10 h-10 bg-${kpi.color}-500/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform group-hover:shadow-[0_0_15px_rgba(0,0,0,0.1)]`}>
+                        <kpi.icon className={`text-${kpi.color}-400 group-hover:animate-pulse`} size={20} />
                       </div>
-                      <span className="text-2xl font-bold text-white">{kpi.value}</span>
+                      <span className={`text-2xl font-bold ${themeClasses.text}`}>{kpi.value}</span>
                     </div>
-                    <p className="text-emerald-300/50 text-sm">{kpi.label}</p>
+                    <p className={`${themeClasses.textSecondary} text-sm`}>{kpi.label}</p>
                   </div>
                 ))}
               </div>
 
               {/* Analytics Section with Progress Bars and Circular Charts - REAL-TIME */}
-              <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-6">
+              <div className={`backdrop-blur-md rounded-2xl border p-6 animate-stagger-5 ${themeClasses.card} ${themeClasses.cardHover}`}>
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
-                    <BarChart3 className="text-emerald-400" size={20} />
-                    <h3 className="text-white font-semibold">Resource Utilization (Real-Time)</h3>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${themeClasses.accentBg}`}>
+                      <BarChart3 className={themeClasses.accentColor} size={18} />
+                    </div>
+                    <h3 className={`font-semibold ${themeClasses.text}`}>Resource Utilization (Real-Time)</h3>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                       <Clock size={14} className="text-emerald-400" />
-                      <span className="text-xs text-emerald-300/50">
+                      <span className={`text-xs ${themeClasses.textSecondary}`}>
                         Last updated: {realTimeStats.lastUpdated.toLocaleTimeString()}
                       </span>
                     </div>
@@ -902,7 +1090,7 @@ ${recommendations}
                         <select
                           value={refreshInterval / 1000}
                           onChange={(e) => changeRefreshInterval(parseInt(e.target.value))}
-                          className="bg-black/30 border border-emerald-500/30 rounded-lg px-2 py-1 text-xs text-emerald-300"
+                          className={`rounded-lg px-2 py-1 text-xs ${themeClasses.input}`}
                         >
                           <option value={3}>3s</option>
                           <option value={5}>5s</option>
@@ -917,7 +1105,7 @@ ${recommendations}
                   <div className="space-y-5">
                     <div key={`usage-${animationKey}`} className="animate-slideIn">
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-emerald-300/70">Lecture Halls Usage</span>
+                        <span className={themeClasses.textSecondary}>Lecture Halls Usage</span>
                         <span className="text-emerald-400 font-mono">{realTimeStats.lectureHallsUsage}%</span>
                       </div>
                       <div className="h-2 bg-emerald-500/20 rounded-full overflow-hidden">
@@ -929,7 +1117,7 @@ ${recommendations}
                     </div>
                     <div key={`equipment-${animationKey}`} className="animate-slideIn">
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-emerald-300/70">Lab Equipment Availability</span>
+                        <span className={themeClasses.textSecondary}>Lab Equipment Availability</span>
                         <span className="text-emerald-400 font-mono">{realTimeStats.labEquipmentAvailability}%</span>
                       </div>
                       <div className="h-2 bg-emerald-500/20 rounded-full overflow-hidden">
@@ -941,7 +1129,7 @@ ${recommendations}
                     </div>
                     <div key={`booking-${animationKey}`} className="animate-slideIn">
                       <div className="flex justify-between text-sm mb-2">
-                        <span className="text-emerald-300/70">Meeting Room Booking</span>
+                        <span className={themeClasses.textSecondary}>Meeting Room Booking</span>
                         <span className="text-emerald-400 font-mono">{realTimeStats.meetingRoomBooking}%</span>
                       </div>
                       <div className="h-2 bg-emerald-500/20 rounded-full overflow-hidden">
@@ -965,12 +1153,12 @@ ${recommendations}
                         />
                       </svg>
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white font-bold text-xl">{realTimeStats.overallEfficiency}%</span>
+                        <span className={`font-bold text-xl ${themeClasses.text}`}>{realTimeStats.overallEfficiency}%</span>
                       </div>
                     </div>
-                    <p className="text-emerald-300/70 text-sm mt-3">Overall Efficiency</p>
-                    <div className="mt-4 p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20">
-                      <p className="text-xs text-emerald-300/80 flex items-center gap-1">
+                    <p className={`${themeClasses.textSecondary} text-sm mt-3`}>Overall Efficiency</p>
+                    <div className={`mt-4 p-3 bg-emerald-500/10 rounded-xl border ${themeClasses.border}`}>
+                      <p className={`text-xs ${themeClasses.textSecondary} flex items-center gap-1`}>
                         <Sparkles size={12} /> 
                         AI Insight: Peak usage {realTimeStats.peakHour} • {realTimeStats.bookingTrend} trend
                       </p>
@@ -980,11 +1168,11 @@ ${recommendations}
               </div>
 
               {/* Schedule/Calendar Widget with Real-Time Updates */}
-              <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl border border-emerald-500/20 overflow-hidden">
-                <div className="p-5 border-b border-emerald-500/20 flex items-center justify-between">
+              <div className={`backdrop-blur-md rounded-2xl border overflow-hidden ${themeClasses.card} ${themeClasses.cardHover}`}>
+                <div className={`p-5 border-b ${themeClasses.border} flex items-center justify-between`}>
                   <div className="flex items-center gap-2">
                     <Calendar className="text-emerald-400" size={18} />
-                    <h3 className="text-white font-semibold">Weekly Planner (Live)</h3>
+                    <h3 className={`font-semibold ${themeClasses.text}`}>Weekly Planner (Live)</h3>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-emerald-400/60">
                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
@@ -995,12 +1183,12 @@ ${recommendations}
                   <div className="min-w-[600px]">
                     <div className="grid grid-cols-7 gap-2 mb-3">
                       {weekDays.map(day => (
-                        <div key={day} className="text-center text-emerald-300/60 text-sm font-medium py-2">{day}</div>
+                        <div key={day} className={`text-center ${themeClasses.textSecondary} text-sm font-medium py-2`}>{day}</div>
                       ))}
                     </div>
                     {timeSlots.map(time => (
                       <div key={time} className="grid grid-cols-7 gap-2 mb-2">
-                        <div className="text-emerald-300/40 text-xs flex items-center">{time}</div>
+                        <div className={`${themeClasses.textSecondary} text-xs flex items-center`}>{time}</div>
                         {weekDays.map(day => {
                           const event = scheduleEvents[day]?.[time];
                           return (
@@ -1027,19 +1215,19 @@ ${recommendations}
 
             {/* Right Column - AI Assistant Card with Real-Time Stats */}
             <div className="space-y-6">
-              <div className="relative overflow-hidden bg-gradient-to-br from-emerald-900/40 via-emerald-800/20 to-black rounded-2xl p-6 border border-emerald-500/30 shadow-xl shadow-emerald-500/10">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/20 rounded-full blur-3xl animate-pulse"></div>
+              <div className="relative overflow-hidden bg-gradient-to-br from-black/60 to-black/90 rounded-2xl p-6 border animate-stagger-2 glass-card transition-all hover:scale-[1.01] hover:shadow-2xl" style={{ borderColor: 'rgba(var(--tw-colors-emerald-500), 0.3)' }}>
+                <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl animate-float ${themeClasses.accentBg}`}></div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30">
-                    <Brain className="text-emerald-400" size={24} />
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${themeClasses.accentBg} ${themeClasses.accentBorder}`}>
+                    <Brain className={themeClasses.accentColor} size={24} />
                   </div>
                   <div>
-                    <h3 className="text-white font-bold">AI Campus Assistant</h3>
-                    <p className="text-emerald-300/50 text-xs">Smart Campus v2.4 • Live</p>
+                    <h3 className="text-white font-bold text-lg">AI Campus Assistant</h3>
+                    <p className={`text-xs ${themeClasses.textSecondary}`}>Smart Campus v2.4 • Live</p>
                   </div>
                 </div>
-                <p className="text-emerald-300/80 text-sm leading-relaxed mb-4">
-                  Real-time analysis: {realTimeStats.lectureHallsUsage}% hall utilization. 
+                <p className={`text-sm leading-relaxed mb-4 ${themeClasses.textSecondary} text-white/80`}>
+                  Real-time analysis: <span className="font-bold text-white">{realTimeStats.lectureHallsUsage}% hall utilization</span>. 
                   {realTimeStats.lectureHallsUsage > 70 
                     ? ' High demand detected. Consider adding more resources.' 
                     : ' Resource allocation is optimal.'}
@@ -1061,14 +1249,14 @@ ${recommendations}
                 </div>
               </div>
 
-              <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-6">
+              <div className={`backdrop-blur-md rounded-2xl border p-6 ${themeClasses.card} ${themeClasses.cardHover}`}>
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp size={18} className="text-emerald-400" />
-                  <h3 className="text-white font-semibold">Performance Metrics (Real-Time)</h3>
+                  <h3 className={`font-semibold ${themeClasses.text}`}>Performance Metrics (Real-Time)</h3>
                 </div>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-emerald-300/70">Resource Efficiency</span>
+                    <span className={themeClasses.textSecondary}>Resource Efficiency</span>
                     <div className="w-32 h-2 bg-emerald-500/20 rounded-full overflow-hidden">
                       <div 
                         className="bg-emerald-500 h-full rounded-full transition-all duration-500"
@@ -1078,7 +1266,7 @@ ${recommendations}
                     <span className="text-sm text-emerald-400 font-mono">{realTimeStats.lectureHallsUsage}%</span>
                   </div>
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-emerald-300/70">Booking Optimization</span>
+                    <span className={themeClasses.textSecondary}>Booking Optimization</span>
                     <div className="w-32 h-2 bg-emerald-500/20 rounded-full overflow-hidden">
                       <div 
                         className="bg-emerald-500 h-full rounded-full transition-all duration-500"
@@ -1088,7 +1276,7 @@ ${recommendations}
                     <span className="text-sm text-emerald-400 font-mono">{realTimeStats.meetingRoomBooking}%</span>
                   </div>
                   <div className="flex items-center justify-between py-2">
-                    <span className="text-emerald-300/70">Maintenance Uptime</span>
+                    <span className={themeClasses.textSecondary}>Maintenance Uptime</span>
                     <div className="w-32 h-2 bg-emerald-500/20 rounded-full overflow-hidden">
                       <div 
                         className="bg-emerald-500 h-full rounded-full transition-all duration-500"
@@ -1100,15 +1288,15 @@ ${recommendations}
                 </div>
               </div>
 
-              <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-6">
+              <div className={`backdrop-blur-md rounded-2xl border p-6 ${themeClasses.card} ${themeClasses.cardHover}`}>
                 <div className="flex items-center gap-2 mb-4">
                   <Rocket size={18} className="text-emerald-400" />
-                  <h3 className="text-white font-semibold">Strategic Goals</h3>
+                  <h3 className={`font-semibold ${themeClasses.text}`}>Strategic Goals</h3>
                 </div>
-                <p className="text-emerald-300/70 text-sm leading-relaxed mb-4">
+                <p className={`${themeClasses.textSecondary} text-sm leading-relaxed mb-4`}>
                   AI-driven optimization targeting {Math.max(30, Math.floor(realTimeStats.overallEfficiency / 3))}% efficiency gain by Q3.
                 </p>
-                <div className="space-y-3 pt-3 border-t border-emerald-500/20">
+                <div className={`space-y-3 pt-3 border-t ${themeClasses.border}`}>
                   {goals.map((goal, idx) => {
                     const Icon = goal.icon;
                     const statusColor = goal.status === 'done' ? 'text-emerald-400' : goal.status === 'in progress' ? 'text-amber-400' : 'text-gray-500';
@@ -1116,7 +1304,7 @@ ${recommendations}
                       <div key={idx} className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Icon size={14} className={statusColor} />
-                          <span className="text-sm text-emerald-300/80">{goal.name}</span>
+                          <span className={`text-sm ${themeClasses.textSecondary}`}>{goal.name}</span>
                         </div>
                         <span className={`text-xs px-2 py-0.5 rounded-full ${
                           goal.status === 'done' ? 'bg-emerald-500/20 text-emerald-400' :
@@ -1137,13 +1325,13 @@ ${recommendations}
           <div className="mt-8">
             <div className="flex justify-between items-center mb-6 flex-wrap gap-4">
               <div>
-                <h3 className="text-xl font-bold text-white">Lecture Halls Management</h3>
-                <p className="text-emerald-300/50 text-sm mt-1">Manage all lecture halls and their facilities</p>
+                <h3 className={`text-xl font-bold ${themeClasses.text}`}>Lecture Halls Management</h3>
+                <p className={`${themeClasses.textSecondary} text-sm mt-1`}>Manage all lecture halls and their facilities</p>
               </div>
               <div className="flex gap-3">
                 <button
                   onClick={downloadCSV}
-                  className="flex items-center gap-2 bg-emerald-500/20 text-emerald-400 px-5 py-2.5 rounded-xl hover:bg-emerald-500/30 transition-all border border-emerald-500/30"
+                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all border ${themeClasses.buttonSecondary}`}
                 >
                   <Download size={18} />
                   Export CSV
@@ -1153,7 +1341,7 @@ ${recommendations}
                     resetForm();
                     setShowForm(!showForm);
                   }}
-                  className="flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white px-5 py-2.5 rounded-xl hover:from-emerald-500 hover:to-green-500 transition-all shadow-lg shadow-emerald-500/20"
+                  className={`flex items-center gap-2 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-500/20 ${themeClasses.buttonPrimary}`}
                 >
                   <Plus size={18} />
                   Add Lecture Hall
@@ -1162,18 +1350,18 @@ ${recommendations}
             </div>
 
             {/* Filtering Options */}
-            <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl border border-emerald-500/20 p-4 mb-6">
+            <div className={`backdrop-blur-md rounded-2xl border p-4 mb-6 ${themeClasses.card} ${themeClasses.cardHover}`}>
               <div className="flex items-center gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   <Filter size={18} className="text-emerald-400" />
-                  <span className="text-emerald-300/70 text-sm">Filters:</span>
+                  <span className={`${themeClasses.textSecondary} text-sm`}>Filters:</span>
                 </div>
                 
                 <div className="flex gap-2">
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="bg-black/30 border border-emerald-500/30 rounded-lg px-3 py-1.5 text-emerald-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className={`rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 ${themeClasses.input}`}
                   >
                     <option value="all">All Status</option>
                     <option value="available">Available</option>
@@ -1184,7 +1372,7 @@ ${recommendations}
                   <select
                     value={filterType}
                     onChange={(e) => setFilterType(e.target.value)}
-                    className="bg-black/30 border border-emerald-500/30 rounded-lg px-3 py-1.5 text-emerald-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                    className={`rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 ${themeClasses.input}`}
                   >
                     <option value="all">All Types</option>
                     <option value="LECTURE_HALL">Lecture Hall</option>
@@ -1196,7 +1384,7 @@ ${recommendations}
                     placeholder="Search by name, building..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="bg-black/30 border border-emerald-500/30 rounded-lg px-3 py-1.5 text-emerald-300 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 w-64"
+                    className={`rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500 w-64 ${themeClasses.input}`}
                   />
                 </div>
               </div>
@@ -1204,47 +1392,52 @@ ${recommendations}
 
             {/* Add/Edit Form */}
             {showForm && (
-              <div className="bg-[#041915]/80 backdrop-blur-md rounded-2xl border border-emerald-500/20 mb-8 overflow-hidden">
-                <div className="p-6 border-b border-emerald-500/20 flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-white">
-                    {editingHall ? 'Edit Lecture Hall' : 'Add New Lecture Hall'}
-                  </h3>
-                  <button onClick={resetForm} className="text-emerald-300/50 hover:text-emerald-400">
-                    <XCircle size={20} />
+              <div className={`backdrop-blur-md rounded-2xl border mb-8 overflow-hidden animate-stagger-1 ${themeClasses.card} ${themeClasses.cardHover}`}>
+                <div className={`p-6 border-b ${themeClasses.border} flex justify-between items-center bg-black/10`}>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${themeClasses.accentBg}`}>
+                      <Settings className={themeClasses.accentColor} size={20} />
+                    </div>
+                    <h3 className={`text-lg font-semibold ${themeClasses.text}`}>
+                      {editingHall ? 'Edit Lecture Hall' : 'Add New Lecture Hall'}
+                    </h3>
+                  </div>
+                  <button onClick={resetForm} className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${themeClasses.textSecondary} hover:text-white hover:bg-rose-500/80`}>
+                    <X size={18} />
                   </button>
                 </div>
                 <form onSubmit={handleSubmit} className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Hall Name</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Hall Name</label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
-                        className="w-full bg-black/30 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${themeClasses.input}`}
                         required
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Type</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Type</label>
                       <select
                         name="type"
                         value={formData.type}
                         onChange={handleInputChange}
-                        className="w-full bg-black/30 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${themeClasses.input}`}
                       >
                         <option value="LECTURE_HALL">Lecture Hall</option>
                         <option value="SEMINAR HALL">Seminar Hall</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Capacity</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Capacity</label>
                       <select
                         name="capacity"
                         value={formData.capacity}
                         onChange={handleInputChange}
-                        className="w-full bg-black/30 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${themeClasses.input}`}
                       >
                         <option value="0 - 50">0 - 50</option>
                         <option value="50 - 100">50 - 100</option>
@@ -1252,12 +1445,12 @@ ${recommendations}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Building</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Building</label>
                       <select
                         name="building"
                         value={formData.building}
                         onChange={handleInputChange}
-                        className="w-full bg-black/30 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${themeClasses.input}`}
                       >
                         <option value="Main Building">Main Building</option>
                         <option value="New Building">New Building</option>
@@ -1265,7 +1458,7 @@ ${recommendations}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Floor (1-10)</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Floor (1-10)</label>
                       <input
                         type="number"
                         name="floor"
@@ -1273,16 +1466,16 @@ ${recommendations}
                         max="10"
                         value={formData.floor}
                         onChange={handleInputChange}
-                        className="w-full bg-black/30 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${themeClasses.input}`}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Status</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Status</label>
                       <select
                         name="status"
                         value={formData.status}
                         onChange={handleInputChange}
-                        className="w-full bg-black/30 border border-emerald-500/30 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${themeClasses.input}`}
                       >
                         <option value="available">Available</option>
                         <option value="booked">Booked</option>
@@ -1292,7 +1485,7 @@ ${recommendations}
                     
                     {/* Image Upload Section */}
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Cover Image (Upload from Computer)</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Cover Image (Upload from Computer)</label>
                       <div className="flex items-start gap-4">
                         <div className="flex-1">
                           <input
@@ -1305,12 +1498,12 @@ ${recommendations}
                           />
                           <label
                             htmlFor="imageUpload"
-                            className="flex items-center justify-center gap-2 w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl cursor-pointer hover:border-emerald-500/60 transition-all bg-black/20"
+                            className={`flex items-center justify-center gap-2 w-full p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all bg-black/20 ${themeClasses.border} hover:border-emerald-500/60`}
                           >
                             <Upload size={20} className="text-emerald-400" />
-                            <span className="text-emerald-300/70">Click to upload image</span>
+                            <span className={themeClasses.textSecondary}>Click to upload image</span>
                           </label>
-                          <p className="text-xs text-emerald-300/40 mt-2">Supported formats: JPG, PNG, GIF (Max 5MB)</p>
+                          <p className={`text-xs ${themeClasses.textSecondary} mt-2`}>Supported formats: JPG, PNG, GIF (Max 5MB)</p>
                         </div>
                         
                         {imagePreview && (
@@ -1330,14 +1523,14 @@ ${recommendations}
                     
                     {/* Description with Toxic Detection */}
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-2">Description</label>
+                      <label className={`block text-sm font-medium mb-2 ${themeClasses.textSecondary}`}>Description</label>
                       <textarea
                         name="description"
                         value={tempDescription}
                         onChange={handleDescriptionChange}
                         rows="4"
-                        className={`w-full bg-black/30 border rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
-                          showToxicWarning ? 'border-rose-500/50 bg-rose-500/5' : 'border-emerald-500/30'
+                        className={`w-full rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 ${
+                          showToxicWarning ? 'border-rose-500/50 bg-rose-500/5' : themeClasses.input
                         }`}
                         placeholder="Describe the hall facilities and features... (Avoid inappropriate language)"
                       />
@@ -1356,7 +1549,7 @@ ${recommendations}
                     
                     {/* Facilities Section */}
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-emerald-300/70 mb-3">Facilities</label>
+                      <label className={`block text-sm font-medium mb-3 ${themeClasses.textSecondary}`}>Facilities</label>
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
                         {Object.keys(formData.facilities).map(facility => {
                           const FacilityIcon = facilityIcons[facility];
@@ -1368,7 +1561,7 @@ ${recommendations}
                               className={`flex items-center gap-2 p-2.5 rounded-xl border transition-all ${
                                 formData.facilities[facility] 
                                   ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
-                                  : 'border-emerald-500/20 text-emerald-300/40 hover:bg-emerald-500/10'
+                                  : `${themeClasses.border} ${themeClasses.textSecondary} hover:bg-emerald-500/10`
                               }`}
                             >
                               {FacilityIcon && <FacilityIcon size={16} />}
@@ -1379,17 +1572,17 @@ ${recommendations}
                       </div>
                     </div>
                   </div>
-                  <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-emerald-500/20">
+                  <div className={`flex justify-end gap-3 mt-6 pt-4 border-t ${themeClasses.border}`}>
                     <button
                       type="button"
                       onClick={resetForm}
-                      className="px-4 py-2 border border-emerald-500/30 rounded-xl text-emerald-300/70 hover:bg-emerald-500/10"
+                      className={`px-4 py-2 rounded-xl transition-all ${themeClasses.buttonSecondary}`}
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 text-white rounded-xl hover:from-emerald-500 hover:to-green-500"
+                      className={`px-4 py-2 text-white rounded-xl transition-all ${themeClasses.buttonPrimary}`}
                     >
                       {editingHall ? 'Update Hall' : 'Add Hall'}
                     </button>
@@ -1399,20 +1592,20 @@ ${recommendations}
             )}
 
             {/* Lecture Halls Table */}
-            <div className="bg-[#041915]/60 backdrop-blur-md rounded-2xl border border-emerald-500/20 overflow-hidden">
+            <div className={`backdrop-blur-md rounded-2xl border overflow-hidden ${themeClasses.card} ${themeClasses.cardHover}`}>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-emerald-500/20 bg-emerald-900/20">
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Cover</th>
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Hall Name</th>
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Type</th>
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Location</th>
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Capacity</th>
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Status</th>
-                      <th className="text-left py-4 px-6 text-emerald-300/60 font-medium text-sm">Facilities</th>
-                      <th className="text-right py-4 px-6 text-emerald-300/60 font-medium text-sm">Actions</th>
-                     </tr>
+                    <tr className={`border-b ${themeClasses.tableHeader}`}>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Cover</th>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Hall Name</th>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Type</th>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Location</th>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Capacity</th>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Status</th>
+                      <th className={`text-left py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Facilities</th>
+                      <th className={`text-right py-4 px-6 ${themeClasses.textSecondary} font-medium text-sm`}>Actions</th>
+                    </tr>
                   </thead>
                   <tbody>
                     {filteredHalls.map(hall => {
@@ -1420,8 +1613,19 @@ ${recommendations}
                       const StatusIcon = statusBadge.icon;
                       const facilityCount = Object.values(hall.facilities).filter(v => v).length;
                       
+                      // Apply theme to status badge
+                      const statusThemeClass = !isDarkTheme ? {
+                        available: 'bg-emerald-100 text-emerald-700',
+                        booked: 'bg-amber-100 text-amber-700',
+                        maintenance: 'bg-rose-100 text-rose-700'
+                      }[hall.status] || 'bg-gray-100 text-gray-700' : statusBadge.bg;
+                      
+                      const statusTextClass = !isDarkTheme ? 
+                        (hall.status === 'available' ? 'text-emerald-700' : hall.status === 'booked' ? 'text-amber-700' : 'text-rose-700') 
+                        : statusBadge.text;
+                      
                       return (
-                        <tr key={hall.id} className="border-b border-emerald-500/10 hover:bg-emerald-500/5 transition">
+                        <tr key={hall.id} className={`border-b transition ${themeClasses.tableRow}`}>
                           <td className="py-4 px-6">
                             {hall.localImage ? (
                               <img src={hall.localImage} alt={hall.name} className="w-16 h-12 object-cover rounded-lg" />
@@ -1433,17 +1637,17 @@ ${recommendations}
                           </td>
                           <td className="py-4 px-6">
                             <div>
-                              <p className="font-medium text-white">{hall.name}</p>
-                              <p className="text-xs text-emerald-300/40 mt-0.5 line-clamp-1">{hall.description}</p>
+                              <p className={`font-medium ${themeClasses.text}`}>{hall.name}</p>
+                              <p className={`text-xs ${themeClasses.textSecondary} mt-0.5 line-clamp-1`}>{hall.description}</p>
                             </div>
                           </td>
                           <td className="py-4 px-6">
-                            <span className="text-sm text-emerald-300/70">
+                            <span className={`text-sm ${themeClasses.textSecondary}`}>
                               {hall.type === 'LECTURE_HALL' ? 'Lecture Hall' : 'Seminar Hall'}
                             </span>
                           </td>
                           <td className="py-4 px-6">
-                            <div className="flex items-center gap-1 text-sm text-emerald-300/70">
+                            <div className={`flex items-center gap-1 text-sm ${themeClasses.textSecondary}`}>
                               <Building size={14} className="text-emerald-400/50" />
                               <span>{hall.location.building}</span>
                               <span className="text-emerald-400/30">•</span>
@@ -1451,10 +1655,10 @@ ${recommendations}
                             </div>
                           </td>
                           <td className="py-4 px-6">
-                            <span className="text-sm text-emerald-300/70">{hall.capacity}</span>
+                            <span className={`text-sm ${themeClasses.textSecondary}`}>{hall.capacity}</span>
                           </td>
                           <td className="py-4 px-6">
-                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}`}>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${statusThemeClass} ${statusTextClass}`}>
                               <StatusIcon size={12} />
                               {statusBadge.label}
                             </span>
@@ -1472,7 +1676,7 @@ ${recommendations}
                                 })}
                               </div>
                               {facilityCount > 3 && (
-                                <span className="text-xs text-emerald-300/40 ml-1">+{facilityCount - 3}</span>
+                                <span className={`text-xs ${themeClasses.textSecondary} ml-1`}>+{facilityCount - 3}</span>
                               )}
                             </div>
                           </td>
@@ -1480,13 +1684,13 @@ ${recommendations}
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 onClick={() => handleEdit(hall)}
-                                className="p-2 text-emerald-300/40 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition"
+                                className={`p-2 rounded-lg transition ${themeClasses.textSecondary} hover:text-emerald-400 hover:bg-emerald-500/10`}
                               >
                                 <Edit size={16} />
                               </button>
                               <button
                                 onClick={() => handleDelete(hall.id, hall.name)}
-                                className="p-2 text-emerald-300/40 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition"
+                                className={`p-2 rounded-lg transition ${themeClasses.textSecondary} hover:text-rose-400 hover:bg-rose-500/10`}
                               >
                                 <Trash2 size={16} />
                               </button>
@@ -1499,8 +1703,8 @@ ${recommendations}
                 </table>
                 {filteredHalls.length === 0 && (
                   <div className="text-center py-12">
-                    <Home className="mx-auto text-emerald-400/30" size={48} />
-                    <p className="text-emerald-300/50 mt-2">No lecture halls found. Click "Add Lecture Hall" to get started.</p>
+                    <Home className={`mx-auto ${themeClasses.textSecondary}`} size={48} />
+                    <p className={`${themeClasses.textSecondary} mt-2`}>No lecture halls found. Click "Add Lecture Hall" to get started.</p>
                   </div>
                 )}
               </div>
