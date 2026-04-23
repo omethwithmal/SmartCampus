@@ -6,10 +6,13 @@ import {
   FaSearch, FaStar, FaStarHalfAlt, FaCalendarAlt, FaClock, 
   FaWifi, FaDesktop, FaMicrophone, FaLightbulb, FaChair, 
   FaWindowMaximize, FaThermometerHalf, FaPlug, FaRegBuilding,
-  FaBookmark, FaShare, FaInfoCircle, FaArrowRight
+  FaBookmark, FaShare, FaInfoCircle, FaArrowRight, FaFlask,
+  FaLaptopCode, FaClipboardList, FaCouch, FaRegSun,
+  FaRegSnowflake, FaServer, FaDoorOpen, FaCode, FaShieldAlt,
+  FaWind, FaMicrochip, FaCoffee
 } from 'react-icons/fa';
-import { MdOutlineMeetingRoom, MdOutlineScreenShare } from 'react-icons/md';
-import { GiWhiteBook } from 'react-icons/gi';
+import { MdOutlineMeetingRoom, MdOutlineScreenShare, MdOutlineScience } from 'react-icons/md';
+import { GiWhiteBook, GiMechanicalArm } from 'react-icons/gi';
 import NavBar from "../NavBar/NavBar";
 import Footer from "../footer/Footer";
 
@@ -144,6 +147,198 @@ const LectureHalls = () => {
         { day: 'Thursday', slots: ['08:00 - 10:00', '13:00 - 15:00'] },
         { day: 'Friday', slots: ['10:00 - 12:00', '15:00 - 17:00'] }
       ]
+    },
+    {
+      id: 5,
+      name: 'Computer Lab A',
+      type: 'LAB',
+      capacity: 40,
+      location: 'IT Building, 2nd Floor',
+      status: 'AVAILABLE',
+      rating: 4.9,
+      reviews: 87,
+      coverImage: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      facilities: {
+        airConditioning: true,
+        projector: true,
+        whiteboard: true,
+        soundSystem: false,
+        wifi: true,
+        smartBoard: false,
+        recordingSystem: false,
+        lighting: true,
+        powerOutlets: true,
+        comfortableSeating: true,
+        computers: true,
+        softwareIDE: true,
+        highSpeedInternet: true
+      },
+      description: 'High-end computer lab with 40 workstations, each equipped with latest processors and dual monitors. Perfect for programming classes, software development, and IT training sessions.',
+      timeSlots: [
+        { day: 'Monday', slots: ['08:00 - 10:00', '10:00 - 12:00', '13:00 - 15:00'] },
+        { day: 'Wednesday', slots: ['08:00 - 10:00', '13:00 - 15:00', '15:00 - 17:00'] },
+        { day: 'Friday', slots: ['10:00 - 12:00', '13:00 - 15:00'] }
+      ]
+    },
+    {
+      id: 6,
+      name: 'Science Lab',
+      type: 'LAB',
+      capacity: 35,
+      location: 'Science Complex, 1st Floor',
+      status: 'AVAILABLE',
+      rating: 4.7,
+      reviews: 63,
+      coverImage: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      facilities: {
+        airConditioning: true,
+        projector: true,
+        whiteboard: true,
+        soundSystem: false,
+        wifi: true,
+        smartBoard: false,
+        recordingSystem: false,
+        lighting: true,
+        powerOutlets: true,
+        comfortableSeating: true,
+        microscopes: true,
+        safetyEquipment: true,
+        ventilation: true
+      },
+      description: 'Fully equipped science laboratory with modern apparatus, fume hoods, and safety stations. Ideal for physics, chemistry, and biology practical sessions.',
+      timeSlots: [
+        { day: 'Tuesday', slots: ['08:00 - 10:00', '10:00 - 12:00', '13:00 - 15:00'] },
+        { day: 'Thursday', slots: ['08:00 - 10:00', '13:00 - 15:00', '15:00 - 17:00'] }
+      ]
+    },
+    {
+      id: 7,
+      name: 'Executive Meeting Room',
+      type: 'MEETING_ROOM',
+      capacity: 20,
+      location: 'Admin Building, 3rd Floor',
+      status: 'AVAILABLE',
+      rating: 4.9,
+      reviews: 112,
+      coverImage: 'https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      facilities: {
+        airConditioning: true,
+        projector: true,
+        whiteboard: true,
+        soundSystem: true,
+        wifi: true,
+        smartBoard: true,
+        recordingSystem: true,
+        lighting: true,
+        powerOutlets: true,
+        comfortableSeating: true,
+        conferenceCall: true,
+        tvScreen: true,
+        whiteboardMarkers: true
+      },
+      description: 'Professional meeting room with elegant decor, perfect for board meetings, client presentations, and team collaborations. Includes video conferencing facilities.',
+      timeSlots: [
+        { day: 'Monday', slots: ['08:00 - 10:00', '10:00 - 12:00', '13:00 - 15:00', '15:00 - 17:00'] },
+        { day: 'Tuesday', slots: ['08:00 - 10:00', '10:00 - 12:00', '13:00 - 17:00'] },
+        { day: 'Wednesday', slots: ['08:00 - 12:00', '13:00 - 17:00'] },
+        { day: 'Thursday', slots: ['08:00 - 12:00', '13:00 - 17:00'] },
+        { day: 'Friday', slots: ['08:00 - 12:00', '13:00 - 17:00'] }
+      ]
+    },
+    {
+      id: 8,
+      name: 'Conference Room',
+      type: 'MEETING_ROOM',
+      capacity: 50,
+      location: 'Business Center, 2nd Floor',
+      status: 'BOOKED',
+      rating: 4.6,
+      reviews: 98,
+      coverImage: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80',
+      facilities: {
+        airConditioning: true,
+        projector: true,
+        whiteboard: true,
+        soundSystem: true,
+        wifi: true,
+        smartBoard: true,
+        recordingSystem: true,
+        lighting: true,
+        powerOutlets: true,
+        comfortableSeating: true,
+        catering: true,
+        podium: true
+      },
+      description: 'Large conference room suitable for seminars, workshops, and corporate events. Equipped with advanced audio-visual system and comfortable seating.',
+      timeSlots: [
+        { day: 'Monday', slots: ['10:00 - 12:00', '14:00 - 16:00'] },
+        { day: 'Wednesday', slots: ['09:00 - 11:00', '13:00 - 15:00'] },
+        { day: 'Friday', slots: ['11:00 - 13:00'] }
+      ]
+    },
+    {
+      id: 9,
+      name: 'Electronics Lab',
+      type: 'LAB',
+      capacity: 30,
+      location: 'Engineering Building, Basement',
+      status: 'AVAILABLE',
+      rating: 4.8,
+      reviews: 45,
+      coverImage: 'https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      facilities: {
+        airConditioning: true,
+        projector: true,
+        whiteboard: true,
+        soundSystem: false,
+        wifi: true,
+        smartBoard: false,
+        recordingSystem: false,
+        lighting: true,
+        powerOutlets: true,
+        comfortableSeating: true,
+        oscilloscopes: true,
+        solderingStations: true,
+        components: true
+      },
+      description: 'Specialized electronics lab with oscilloscopes, function generators, power supplies, and soldering stations. Perfect for circuit design and microcontroller projects.',
+      timeSlots: [
+        { day: 'Tuesday', slots: ['08:00 - 12:00', '13:00 - 17:00'] },
+        { day: 'Thursday', slots: ['08:00 - 12:00', '13:00 - 17:00'] }
+      ]
+    },
+    {
+      id: 10,
+      name: 'Team Huddle Room',
+      type: 'MEETING_ROOM',
+      capacity: 12,
+      location: 'Innovation Hub, 1st Floor',
+      status: 'AVAILABLE',
+      rating: 4.5,
+      reviews: 67,
+      coverImage: 'https://images.unsplash.com/photo-1556761175-4b46a572b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=1974&q=80',
+      facilities: {
+        airConditioning: true,
+        projector: true,
+        whiteboard: true,
+        soundSystem: true,
+        wifi: true,
+        smartBoard: false,
+        recordingSystem: false,
+        lighting: true,
+        powerOutlets: true,
+        comfortableSeating: true,
+        whiteboardWall: true,
+        beanBags: true
+      },
+      description: 'Casual meeting space designed for team brainstorming and creative discussions. Includes writable walls, comfortable bean bags, and smart TV.',
+      timeSlots: [
+        { day: 'Monday', slots: ['09:00 - 11:00', '11:00 - 13:00', '14:00 - 16:00'] },
+        { day: 'Tuesday', slots: ['09:00 - 11:00', '13:00 - 15:00', '15:00 - 17:00'] },
+        { day: 'Wednesday', slots: ['10:00 - 12:00', '14:00 - 16:00'] },
+        { day: 'Thursday', slots: ['09:00 - 11:00', '13:00 - 15:00'] },
+        { day: 'Friday', slots: ['09:00 - 12:00'] }
+      ]
     }
   ];
 
@@ -165,7 +360,6 @@ const LectureHalls = () => {
   });
 
   const handleBookNow = (hall) => {
-    // Navigate to booking page with hall data
     navigate('/booking', { state: { hall } });
   };
 
@@ -180,16 +374,77 @@ const LectureHalls = () => {
       recordingSystem: <FaVideo className="text-red-500" />,
       lighting: <FaLightbulb className="text-yellow-500" />,
       powerOutlets: <FaPlug className="text-gray-500" />,
-      comfortableSeating: <FaChair className="text-teal-500" />
+      comfortableSeating: <FaChair className="text-teal-500" />,
+      computers: <FaLaptopCode className="text-blue-600" />,
+      softwareIDE: <FaCode className="text-green-600" />,
+      highSpeedInternet: <FaServer className="text-gray-700" />,
+      microscopes: <MdOutlineScience className="text-emerald-600" />,
+      safetyEquipment: <FaShieldAlt className="text-red-600" />,
+      ventilation: <FaWind className="text-cyan-600" />,
+      oscilloscopes: <FaMicrochip className="text-purple-600" />,
+      solderingStations: <GiMechanicalArm className="text-orange-600" />,
+      components: <FaMicrochip className="text-gray-600" />,
+      conferenceCall: <FaVideo className="text-indigo-600" />,
+      tvScreen: <FaDesktop className="text-gray-700" />,
+      whiteboardMarkers: <GiWhiteBook className="text-green-600" />,
+      catering: <FaCoffee className="text-amber-700" />,
+      podium: <FaChalkboardTeacher className="text-blue-700" />,
+      whiteboardWall: <GiWhiteBook className="text-emerald-600" />,
+      beanBags: <FaCouch className="text-purple-600" />
     };
-    return icons[facility] || null;
+    return icons[facility] || <FaCheckCircle className="text-gray-400" />;
+  };
+
+  const getTypeIcon = (type) => {
+    switch(type) {
+      case 'LECTURE_HALL':
+        return <FaChalkboard className="text-xl" />;
+      case 'SEMINAR_HALL':
+        return <FaChalkboardTeacher className="text-xl" />;
+      case 'LAB':
+        return <FaFlask className="text-xl" />;
+      case 'MEETING_ROOM':
+        return <MdOutlineMeetingRoom className="text-xl" />;
+      default:
+        return <MdOutlineMeetingRoom className="text-xl" />;
+    }
+  };
+
+  const getTypeBadgeColor = (type) => {
+    switch(type) {
+      case 'LECTURE_HALL':
+        return 'bg-blue-100 text-blue-700';
+      case 'SEMINAR_HALL':
+        return 'bg-purple-100 text-purple-700';
+      case 'LAB':
+        return 'bg-green-100 text-green-700';
+      case 'MEETING_ROOM':
+        return 'bg-orange-100 text-orange-700';
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
+  const getTypeDisplayName = (type) => {
+    switch(type) {
+      case 'LECTURE_HALL':
+        return 'Lecture Hall';
+      case 'SEMINAR_HALL':
+        return 'Seminar Hall';
+      case 'LAB':
+        return 'Laboratory';
+      case 'MEETING_ROOM':
+        return 'Meeting Room';
+      default:
+        return type;
+    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       <NavBar />
       
-      {/* Hero Section with Online Cover Image */}
+      {/* Hero Section */}
       <div className="relative h-[450px] overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -209,10 +464,10 @@ const LectureHalls = () => {
               </div>
             </div>
             <h1 className="text-5xl md:text-7xl font-bold mb-4 animate-fadeInDown">
-              Lecture Halls
+              Lecture Halls & Spaces
             </h1>
             <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto animate-fadeInUp">
-              Discover and book premium lecture halls equipped with world-class facilities
+              Discover and book premium lecture halls, labs, and meeting rooms equipped with world-class facilities
             </p>
           </div>
         </div>
@@ -241,6 +496,8 @@ const LectureHalls = () => {
               <option value="all">All Types</option>
               <option value="LECTURE_HALL">Lecture Hall</option>
               <option value="SEMINAR_HALL">Seminar Hall</option>
+              <option value="LAB">Laboratory</option>
+              <option value="MEETING_ROOM">Meeting Room</option>
             </select>
             
             <select
@@ -264,6 +521,8 @@ const LectureHalls = () => {
               <option value="projector">Projector</option>
               <option value="whiteboard">Whiteboard</option>
               <option value="soundSystem">Sound System</option>
+              <option value="computers">Computers</option>
+              <option value="conferenceCall">Video Conferencing</option>
             </select>
           </div>
         </div>
@@ -273,7 +532,7 @@ const LectureHalls = () => {
       <div className="flex-grow py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredHalls.map((hall, index) => (
+            {filteredHalls.map((hall) => (
               <div 
                 key={hall.id} 
                 className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
@@ -321,11 +580,11 @@ const LectureHalls = () => {
                 
                 {/* Card Content */}
                 <div className="p-6">
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-500 flex items-center gap-1">
-                      <MdOutlineMeetingRoom className="text-xs" />
-                      {hall.type.replace('_', ' ')}
-                    </p>
+                  <div className="mb-4 flex justify-between items-center">
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2 ${getTypeBadgeColor(hall.type)}`}>
+                      {getTypeIcon(hall.type)}
+                      <span>{getTypeDisplayName(hall.type)}</span>
+                    </div>
                   </div>
                   
                   <div className="space-y-2 mb-4">
@@ -333,7 +592,7 @@ const LectureHalls = () => {
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
                         <FaUsers className="text-[#2800aa] text-sm" />
                       </div>
-                      <span className="text-sm">Capacity: <strong className="text-gray-900">{hall.capacity}</strong> students</span>
+                      <span className="text-sm">Capacity: <strong className="text-gray-900">{hall.capacity}</strong> people</span>
                     </div>
                     <div className="flex items-center gap-3 text-gray-600">
                       <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -351,19 +610,24 @@ const LectureHalls = () => {
                   
                   {/* Facilities Grid */}
                   <div className="mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">Premium Facilities</h4>
+                    <h4 className="font-semibold text-gray-900 mb-2 text-sm">Key Facilities</h4>
                     <div className="grid grid-cols-3 gap-2">
                       {Object.entries(hall.facilities).slice(0, 6).map(([key, value]) => (
                         value && (
                           <div key={key} className="flex items-center gap-1.5 text-xs text-gray-600 bg-gray-50 rounded-lg px-2 py-1.5">
                             {getFacilityIcon(key)}
-                            <span className="capitalize">
+                            <span className="capitalize truncate">
                               {key === 'airConditioning' ? 'AC' : 
                                key === 'soundSystem' ? 'Sound' :
                                key === 'smartBoard' ? 'Smart Board' :
                                key === 'recordingSystem' ? 'Recording' :
                                key === 'powerOutlets' ? 'Power' :
                                key === 'comfortableSeating' ? 'Seating' :
+                               key === 'highSpeedInternet' ? 'High-Speed Net' :
+                               key === 'conferenceCall' ? 'Video Conf' :
+                               key === 'whiteboardMarkers' ? 'Markers' :
+                               key === 'beanBags' ? 'Bean Bags' :
+                               key === 'solderingStations' ? 'Soldering' :
                                key}
                             </span>
                           </div>
@@ -400,7 +664,7 @@ const LectureHalls = () => {
             <div className="text-center py-16">
               <div className="bg-white rounded-2xl p-12 shadow-lg max-w-md mx-auto">
                 <FaSearch className="text-6xl text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 text-lg">No lecture halls found matching your criteria.</p>
+                <p className="text-gray-500 text-lg">No spaces found matching your criteria.</p>
                 <button 
                   onClick={() => {
                     setSearchTerm('');
@@ -443,40 +707,12 @@ const LectureHalls = () => {
           }
         }
         
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
-        
-        @keyframes scaleIn {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
         .animate-fadeInDown {
           animation: fadeInDown 0.8s ease-out;
         }
         
         .animate-fadeInUp {
           animation: fadeInUp 0.8s ease-out;
-        }
-        
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out;
-        }
-        
-        .animate-scaleIn {
-          animation: scaleIn 0.3s ease-out;
         }
         
         .line-clamp-2 {
