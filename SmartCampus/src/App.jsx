@@ -23,12 +23,17 @@ function App() {
       <Route path="/Home" element={<Home />} />
       <Route path="/NavBar" element={<NavBar />} />
       <Route path="/Footer" element={<Footer />} />
+
       <Route path="/LectureHalls" element={<LectureHalls />} />
+      <Route path="/AddLectureHalls" element={<AddLectureHalls />} />
+
+
       <Route path="/Labs" element={<Labs  />} />
       <Route path="/MeetingRooms" element={<MeetingRooms />} />
       <Route path="/Equipment" element={<Equipment />} />
+
        <Route path="/AdminSidebar" element={<AdminSidebar />} />
-       <Route path="/AddLectureHalls" element={<AddLectureHalls />} />
+       
        <Route path="/QuickAnalyze" element={<QuickAnalyze />} />
        <Route path="/LabsAnalyzeDashboard" element={<LabsAnalyzeDashboard />} />
      
