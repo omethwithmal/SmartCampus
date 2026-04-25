@@ -14,6 +14,7 @@ import AdminSidebar from "./components/Ometh Widmal/AdminSidebar/AdminSidebar";
 import AddLectureHalls from "./components/Ometh Widmal/AddLectureHalls/AddLectureHalls";
 import QuickAnalyze from "./components/Ometh Widmal/QuickAnalyze/QuickAnalyze";
 import LabsAnalyzeDashboard from "./components/Ometh Widmal/LabsAnalyzeDashboard/LabsAnalyzeDashboard";
+import EquipmentManager from "./components/Ometh Widmal/EquipmentManager/EquipmentManager";
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
 
       <Route path="/LectureHalls" element={<LectureHalls />} />
       <Route path="/AddLectureHalls" element={<AddLectureHalls />} />
+      <Route path="/EquipmentManager" element={<EquipmentManager />} />
+      
 
 
       <Route path="/Labs" element={<Labs  />} />
