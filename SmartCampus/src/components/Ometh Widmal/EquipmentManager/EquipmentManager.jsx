@@ -18,11 +18,13 @@ import {
   Calendar,
   Package,
   AlertTriangle,
-  Info
+  Info,
+  RefreshCw
 } from 'lucide-react';
 
 const EquipmentManager = () => {
   const [equipmentList, setEquipmentList] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     id: null,
     name: '',
@@ -35,7 +37,11 @@ const EquipmentManager = () => {
   const [showForm, setShowForm] = useState(false);
   const [viewModal, setViewModal] = useState(null);
   const [popupMessage, setPopupMessage] = useState({ show: false, message: '', type: '' });
+  const [statistics, setStatistics] = useState(null);
   const fileInputRef = useRef(null);
+
+  // API Base URL
+  const API_BASE_URL = 'http://localhost:8080/api/equipment';
 
   // English bad words list
   const badWords = [
@@ -62,6 +68,50 @@ const EquipmentManager = () => {
     }, 3000);
   };
 
+  // Fetch all equipment from backend
+  const fetchEquipment = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(API_BASE_URL);
+      if (response.ok) {
+        const data = await response.json();
+        setEquipmentList(data);
+      } else {
+        showPopup('Failed to fetch equipment', 'error');
+      }
+    } catch (error) {
+      console.error('Error fetching equipment:', error);
+      showPopup('Cannot connect to backend server', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch statistics from backend
+  const fetchStatistics = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/statistics`);
+      if (response.ok) {
+        const data = await response.json();
+        setStatistics(data);
+      }
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+    }
+  };
+
+  // Load data from backend on mount
+  useEffect(() => {
+    fetchEquipment();
+    fetchStatistics();
+  }, []);
+
+  // Refresh data after CRUD operations
+  const refreshData = () => {
+    fetchEquipment();
+    fetchStatistics();
+  };
+
   // Handle input change with profanity detection
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,55 +136,6 @@ const EquipmentManager = () => {
     setFormData({ ...formData, description: value });
   };
 
-  // Load data from localStorage on mount
-  useEffect(() => {
-    const savedData = localStorage.getItem('equipmentList');
-    if (savedData) {
-      setEquipmentList(JSON.parse(savedData));
-    } else {
-      // Demo data
-      const demoData = [
-        {
-          id: 1,
-          name: 'Epson EB-695Wi',
-          category: 'Projector',
-          status: 'AVAILABLE',
-          image: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b80?w=150&h=150&fit=crop',
-          description: 'Ultra short throw interactive projector, 3500 lumens',
-          addedDate: '2024-01-15',
-          lastUpdated: '2024-01-15'
-        },
-        {
-          id: 2,
-          name: 'Sony A7III',
-          category: 'Camera',
-          status: 'Booked',
-          image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=150&h=150&fit=crop',
-          description: 'Full-frame mirrorless camera with 24.2MP sensor',
-          addedDate: '2024-02-10',
-          lastUpdated: '2024-02-10'
-        },
-        {
-          id: 3,
-          name: 'Shure SM58',
-          category: 'Microphone',
-          status: 'AVAILABLE',
-          image: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=150&h=150&fit=crop',
-          description: 'Dynamic vocal microphone with cardioid pattern',
-          addedDate: '2024-03-05',
-          lastUpdated: '2024-03-05'
-        }
-      ];
-      setEquipmentList(demoData);
-      localStorage.setItem('equipmentList', JSON.stringify(demoData));
-    }
-  }, []);
-
-  // Save to localStorage whenever equipmentList changes
-  useEffect(() => {
-    localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
-  }, [equipmentList]);
-
   // Handle local image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -147,7 +148,8 @@ const EquipmentManager = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  // Create or Update equipment
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (containsProfanity(formData.name)) {
@@ -160,24 +162,92 @@ const EquipmentManager = () => {
       return;
     }
     
-    const currentDate = new Date().toISOString().split('T')[0];
+    setLoading(true);
     
-    if (isEditing) {
-      setEquipmentList(equipmentList.map(item => 
-        item.id === formData.id ? { ...formData, lastUpdated: currentDate } : item
-      ));
-      showPopup('Equipment updated successfully!', 'success');
-      setIsEditing(false);
-    } else {
-      const newId = equipmentList.length > 0 ? Math.max(...equipmentList.map(i => i.id)) + 1 : 1;
-      setEquipmentList([...equipmentList, { 
-        ...formData, 
-        id: newId, 
-        addedDate: currentDate,
-        lastUpdated: currentDate
-      }]);
-      showPopup('Equipment added successfully!', 'success');
+    try {
+      let response;
+      if (isEditing) {
+        // Update existing equipment
+        response = await fetch(`${API_BASE_URL}/${formData.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      } else {
+        // Create new equipment
+        response = await fetch(API_BASE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+      }
+      
+      if (response.ok) {
+        showPopup(isEditing ? 'Equipment updated successfully!' : 'Equipment added successfully!', 'success');
+        refreshData();
+        resetForm();
+      } else {
+        const error = await response.json();
+        showPopup(error.error || 'Operation failed', 'error');
+      }
+    } catch (error) {
+      console.error('Error saving equipment:', error);
+      showPopup('Cannot connect to backend server', 'error');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Delete equipment
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this equipment?')) {
+      setLoading(true);
+      try {
+        const response = await fetch(`${API_BASE_URL}/${id}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          showPopup('Equipment deleted successfully!', 'success');
+          refreshData();
+        } else {
+          const error = await response.json();
+          showPopup(error.error || 'Delete failed', 'error');
+        }
+      } catch (error) {
+        console.error('Error deleting equipment:', error);
+        showPopup('Cannot connect to backend server', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  // Edit equipment
+  const handleEdit = (equipment) => {
+    setFormData({
+      id: equipment.id,
+      name: equipment.name,
+      category: equipment.category,
+      status: equipment.status,
+      image: equipment.image || '',
+      description: equipment.description || ''
+    });
+    setIsEditing(true);
+    setShowForm(true);
+  };
+
+  // View equipment details
+  const handleView = (equipment) => {
+    setViewModal(equipment);
+  };
+
+  // Reset form
+  const resetForm = () => {
     setFormData({
       id: null,
       name: '',
@@ -186,27 +256,11 @@ const EquipmentManager = () => {
       image: '',
       description: ''
     });
+    setIsEditing(false);
     setShowForm(false);
   };
 
-  const handleEdit = (equipment) => {
-    setFormData(equipment);
-    setIsEditing(true);
-    setShowForm(true);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this equipment?')) {
-      setEquipmentList(equipmentList.filter(item => item.id !== id));
-      showPopup('Equipment deleted successfully!', 'success');
-    }
-  };
-
-  const handleView = (equipment) => {
-    setViewModal(equipment);
-  };
-
-  // Dashboard statistics
+  // Dashboard statistics (from backend or calculated)
   const totalItems = equipmentList.length;
   const availableItems = equipmentList.filter(item => item.status === 'AVAILABLE').length;
   const bookedItems = equipmentList.filter(item => item.status === 'Booked').length;
@@ -221,9 +275,13 @@ const EquipmentManager = () => {
     Speaker: equipmentList.filter(item => item.category === 'Speaker').length
   };
 
+  // Recent additions (last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const recentAdditions = equipmentList.filter(item => new Date(item.addedDate) >= thirtyDaysAgo).length;
+  const recentAdditions = equipmentList.filter(item => {
+    if (!item.addedDate) return false;
+    return new Date(item.addedDate) >= thirtyDaysAgo;
+  }).length;
 
   const getCategoryIcon = (category) => {
     switch(category) {
@@ -236,8 +294,25 @@ const EquipmentManager = () => {
     }
   };
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
   return (
     <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen relative">
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-4 flex items-center gap-3">
+            <RefreshCw className="animate-spin text-blue-600" size={24} />
+            <span className="text-gray-700">Processing...</span>
+          </div>
+        </div>
+      )}
+
       {/* Modern Popup Message */}
       {popupMessage.show && (
         <div className="fixed top-5 right-5 z-50 animate-slide-in-right">
@@ -268,7 +343,7 @@ const EquipmentManager = () => {
         </div>
       )}
 
-      {/* Header with navigation button */}
+      {/* Header with navigation button and refresh */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
@@ -276,16 +351,26 @@ const EquipmentManager = () => {
           </h1>
           <p className="text-gray-500 mt-1">Manage and track all your equipment inventory</p>
         </div>
-        <Link 
-          to="/AddLectureHalls"
-          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
-        >
-          <PlusCircle size={18} />
-          Go to Add Lecture Halls
-        </Link>
+        <div className="flex gap-3">
+          <button
+            onClick={refreshData}
+            className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
+            title="Refresh"
+          >
+            <RefreshCw size={18} />
+            Refresh
+          </button>
+          <Link 
+            to="/AddLectureHalls"
+            className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
+          >
+            <PlusCircle size={18} />
+            Go to Add Lecture Halls
+          </Link>
+        </div>
       </div>
 
-      {/* Dashboard Cards - same as before */}
+      {/* Dashboard Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
@@ -486,13 +571,14 @@ const EquipmentManager = () => {
             <div className="md:col-span-2 flex gap-3 pt-2">
               <button
                 type="submit"
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2 rounded-lg transition shadow-md"
+                disabled={loading}
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2 rounded-lg transition shadow-md disabled:opacity-50"
               >
                 {isEditing ? 'Update Equipment' : 'Save Equipment'}
               </button>
               <button
                 type="button"
-                onClick={() => { setShowForm(false); setIsEditing(false); }}
+                onClick={resetForm}
                 className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-2 rounded-lg transition"
               >
                 Cancel
@@ -534,7 +620,7 @@ const EquipmentManager = () => {
                       {getCategoryIcon(item.category)}
                       <span>{item.category}</span>
                     </div>
-                  </td>
+                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full font-medium ${
                       item.status === 'AVAILABLE' 
@@ -543,7 +629,7 @@ const EquipmentManager = () => {
                     }`}>
                       {item.status}
                     </span>
-                  </td>
+                   </td>
                   <td className="px-6 py-4 max-w-xs truncate text-gray-600">{item.description}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex gap-2">
@@ -569,15 +655,15 @@ const EquipmentManager = () => {
                         <Trash2 size={18} />
                       </button>
                     </div>
-                  </td>
-                </tr>
+                   </td>
+                 </tr>
               ))}
-              {equipmentList.length === 0 && (
+              {equipmentList.length === 0 && !loading && (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
                     No equipment found. Click "Add New Equipment" to get started.
-                  </td>
-                </tr>
+                   </td>
+                 </tr>
               )}
             </tbody>
           </table>
@@ -639,11 +725,11 @@ const EquipmentManager = () => {
                   <div className="flex justify-between text-sm">
                     <div>
                       <label className="text-xs text-gray-500">Added Date</label>
-                      <p className="text-gray-700">{viewModal.addedDate || 'N/A'}</p>
+                      <p className="text-gray-700">{formatDate(viewModal.addedDate)}</p>
                     </div>
                     <div>
                       <label className="text-xs text-gray-500">Last Updated</label>
-                      <p className="text-gray-700">{viewModal.lastUpdated || 'N/A'}</p>
+                      <p className="text-gray-700">{formatDate(viewModal.lastUpdated)}</p>
                     </div>
                   </div>
                 </div>
@@ -683,19 +769,21 @@ const EquipmentManager = () => {
           }
         }
         
-        @keyframes slideOutRight {
+        .animate-slide-in-right {
+          animation: slideInRight 0.3s ease-out forwards;
+        }
+        
+        @keyframes spin {
           from {
-            transform: translateX(0);
-            opacity: 1;
+            transform: rotate(0deg);
           }
           to {
-            transform: translateX(100%);
-            opacity: 0;
+            transform: rotate(360deg);
           }
         }
         
-        .animate-slide-in-right {
-          animation: slideInRight 0.3s ease-out forwards;
+        .animate-spin {
+          animation: spin 1s linear infinite;
         }
       `}</style>
     </div>
