@@ -16,7 +16,9 @@ import {
   Upload,
   X,
   Calendar,
-  Package
+  Package,
+  AlertTriangle,
+  Info
 } from 'lucide-react';
 
 const EquipmentManager = () => {
@@ -32,7 +34,57 @@ const EquipmentManager = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [viewModal, setViewModal] = useState(null);
+  const [popupMessage, setPopupMessage] = useState({ show: false, message: '', type: '' });
   const fileInputRef = useRef(null);
+
+  // English bad words list
+  const badWords = [
+    'fuck', 'shit', 'damn', 'bitch', 'asshole', 'bastard', 'cock', 'pussy', 'dick', 'whore',
+    'slut', 'cunt', 'motherfucker', 'hell', 'fucking', 'bloody', 'arse', 'balls', 'wanker',
+    'ass', 'fag', 'nigger', 'retard', 'twat', 'piss', 'crap', 'douche', 'gunter'
+  ];
+
+  // Function to check for profanity
+  const containsProfanity = (text) => {
+    if (!text) return false;
+    const lowerText = text.toLowerCase();
+    return badWords.some(word => {
+      const regex = new RegExp(`\\b${word}\\b`, 'i');
+      return regex.test(lowerText);
+    });
+  };
+
+  // Function to show popup message
+  const showPopup = (message, type = 'error') => {
+    setPopupMessage({ show: true, message, type });
+    setTimeout(() => {
+      setPopupMessage({ show: false, message: '', type: '' });
+    }, 3000);
+  };
+
+  // Handle input change with profanity detection
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    
+    if ((name === 'name' || name === 'description') && containsProfanity(value)) {
+      showPopup(`⚠️ Please remove inappropriate words from ${name === 'name' ? 'Equipment Name' : 'Description'}`, 'warning');
+      return;
+    }
+    
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle textarea with real-time profanity detection
+  const handleDescriptionChange = (e) => {
+    const value = e.target.value;
+    
+    if (containsProfanity(value)) {
+      showPopup('⚠️ Please remove inappropriate words from Description', 'warning');
+      return;
+    }
+    
+    setFormData({ ...formData, description: value });
+  };
 
   // Load data from localStorage on mount
   useEffect(() => {
@@ -83,11 +135,6 @@ const EquipmentManager = () => {
     localStorage.setItem('equipmentList', JSON.stringify(equipmentList));
   }, [equipmentList]);
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
   // Handle local image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -102,16 +149,26 @@ const EquipmentManager = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (containsProfanity(formData.name)) {
+      showPopup('Please remove inappropriate words from Equipment Name', 'warning');
+      return;
+    }
+    
+    if (containsProfanity(formData.description)) {
+      showPopup('Please remove inappropriate words from Description', 'warning');
+      return;
+    }
+    
     const currentDate = new Date().toISOString().split('T')[0];
     
     if (isEditing) {
-      // Update existing equipment
       setEquipmentList(equipmentList.map(item => 
         item.id === formData.id ? { ...formData, lastUpdated: currentDate } : item
       ));
+      showPopup('Equipment updated successfully!', 'success');
       setIsEditing(false);
     } else {
-      // Add new equipment
       const newId = equipmentList.length > 0 ? Math.max(...equipmentList.map(i => i.id)) + 1 : 1;
       setEquipmentList([...equipmentList, { 
         ...formData, 
@@ -119,8 +176,8 @@ const EquipmentManager = () => {
         addedDate: currentDate,
         lastUpdated: currentDate
       }]);
+      showPopup('Equipment added successfully!', 'success');
     }
-    // Reset form
     setFormData({
       id: null,
       name: '',
@@ -141,6 +198,7 @@ const EquipmentManager = () => {
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this equipment?')) {
       setEquipmentList(equipmentList.filter(item => item.id !== id));
+      showPopup('Equipment deleted successfully!', 'success');
     }
   };
 
@@ -163,7 +221,6 @@ const EquipmentManager = () => {
     Speaker: equipmentList.filter(item => item.category === 'Speaker').length
   };
 
-  // Get recent additions (last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   const recentAdditions = equipmentList.filter(item => new Date(item.addedDate) >= thirtyDaysAgo).length;
@@ -180,42 +237,72 @@ const EquipmentManager = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen">
+    <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen relative">
+      {/* Modern Popup Message */}
+      {popupMessage.show && (
+        <div className="fixed top-5 right-5 z-50 animate-slide-in-right">
+          <div className={`
+            flex items-center gap-3 px-5 py-3 rounded-xl shadow-lg backdrop-blur-sm
+            ${popupMessage.type === 'success' ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' : ''}
+            ${popupMessage.type === 'warning' ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-white' : ''}
+            ${popupMessage.type === 'error' ? 'bg-gradient-to-r from-red-500 to-red-600 text-white' : ''}
+            ${popupMessage.type === 'info' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' : ''}
+            min-w-[300px] max-w-md border-l-4 border-white
+          `}>
+            <div className="flex-shrink-0">
+              {popupMessage.type === 'success' && <CheckCircle size={22} className="text-white" />}
+              {popupMessage.type === 'warning' && <AlertTriangle size={22} className="text-white" />}
+              {popupMessage.type === 'error' && <XCircle size={22} className="text-white" />}
+              {popupMessage.type === 'info' && <Info size={22} className="text-white" />}
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-sm">{popupMessage.message}</p>
+            </div>
+            <button 
+              onClick={() => setPopupMessage({ show: false, message: '', type: '' })}
+              className="flex-shrink-0 hover:bg-white/20 rounded-lg p-1 transition"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header with navigation button */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-blue-600">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
             Equipment Management
           </h1>
           <p className="text-gray-500 mt-1">Manage and track all your equipment inventory</p>
         </div>
         <Link 
           to="/AddLectureHalls"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-all shadow-md"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
         >
           <PlusCircle size={18} />
           Go to Add Lecture Halls
         </Link>
       </div>
 
-      {/* Dashboard Cards */}
+      {/* Dashboard Cards - same as before */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
+            <div className="p-3 bg-gradient-to-r from-blue-100 to-blue-200 rounded-xl">
               <Package className="text-blue-600" size={24} />
             </div>
           </div>
           <h3 className="text-gray-500 text-sm font-medium">Total Equipment</h3>
           <p className="text-3xl font-bold text-gray-800">{totalItems}</p>
           <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-blue-500 rounded-full" style={{ width: '100%' }}></div>
+            <div className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full" style={{ width: '100%' }}></div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-green-100 rounded-lg">
+            <div className="p-3 bg-gradient-to-r from-green-100 to-green-200 rounded-xl">
               <CheckCircle className="text-green-600" size={24} />
             </div>
             <span className="text-sm font-semibold text-green-600">{availablePercentage}%</span>
@@ -223,13 +310,13 @@ const EquipmentManager = () => {
           <h3 className="text-gray-500 text-sm font-medium">Available</h3>
           <p className="text-3xl font-bold text-green-600">{availableItems}</p>
           <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-green-500 rounded-full" style={{ width: `${availablePercentage}%` }}></div>
+            <div className="h-full bg-gradient-to-r from-green-500 to-green-600 rounded-full" style={{ width: `${availablePercentage}%` }}></div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-red-100 rounded-lg">
+            <div className="p-3 bg-gradient-to-r from-red-100 to-red-200 rounded-xl">
               <XCircle className="text-red-600" size={24} />
             </div>
             <span className="text-sm font-semibold text-red-600">{bookedPercentage}%</span>
@@ -237,24 +324,24 @@ const EquipmentManager = () => {
           <h3 className="text-gray-500 text-sm font-medium">Booked</h3>
           <p className="text-3xl font-bold text-red-600">{bookedItems}</p>
           <div className="mt-3 h-1 bg-gray-200 rounded-full overflow-hidden">
-            <div className="h-full bg-red-500 rounded-full" style={{ width: `${bookedPercentage}%` }}></div>
+            <div className="h-full bg-gradient-to-r from-red-500 to-red-600 rounded-full" style={{ width: `${bookedPercentage}%` }}></div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-blue-100 rounded-lg">
-              <Calendar className="text-blue-600" size={24} />
+            <div className="p-3 bg-gradient-to-r from-purple-100 to-purple-200 rounded-xl">
+              <Calendar className="text-purple-600" size={24} />
             </div>
           </div>
           <h3 className="text-gray-500 text-sm font-medium">Recent Additions</h3>
-          <p className="text-3xl font-bold text-blue-600">{recentAdditions}</p>
+          <p className="text-3xl font-bold text-purple-600">{recentAdditions}</p>
           <p className="text-xs text-gray-400 mt-2">Last 30 days</p>
         </div>
       </div>
 
       {/* Category Distribution */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div className="bg-white rounded-xl shadow-md p-6 mb-8">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Equipment by Category</h2>
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {Object.entries(categoryCount).map(([category, count]) => {
@@ -270,7 +357,7 @@ const EquipmentManager = () => {
                 </div>
                 <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-blue-500 rounded-full"
+                    className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"
                     style={{ width: `${percentage}%` }}
                   ></div>
                 </div>
@@ -285,16 +372,16 @@ const EquipmentManager = () => {
       <div className="mb-6">
         <button
           onClick={() => { setShowForm(!showForm); setIsEditing(false); setFormData({ id: null, name: '', category: 'Projector', status: 'AVAILABLE', image: '', description: '' }); }}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition shadow-md"
+          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
         >
           <PlusCircle size={18} />
           Add New Equipment
         </button>
       </div>
 
-      {/* Add/Edit Form with Local Image Upload */}
+      {/* Add/Edit Form */}
       {showForm && (
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-4">
             {isEditing ? 'Edit Equipment' : 'Add New Equipment'}
           </h2>
@@ -310,6 +397,9 @@ const EquipmentManager = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter equipment name"
               />
+              <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                <Info size={12} /> No inappropriate words allowed
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
@@ -384,16 +474,19 @@ const EquipmentManager = () => {
               <textarea
                 name="description"
                 value={formData.description}
-                onChange={handleInputChange}
+                onChange={handleDescriptionChange}
                 rows="3"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter equipment description"
               ></textarea>
+              <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                <Info size={12} /> No inappropriate words allowed
+              </p>
             </div>
             <div className="md:col-span-2 flex gap-3 pt-2">
               <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition shadow-md"
+                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-5 py-2 rounded-lg transition shadow-md"
               >
                 {isEditing ? 'Update Equipment' : 'Save Equipment'}
               </button>
@@ -410,7 +503,7 @@ const EquipmentManager = () => {
       )}
 
       {/* Equipment Table */}
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
@@ -425,7 +518,7 @@ const EquipmentManager = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {equipmentList.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
+                <tr key={item.id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 whitespace-nowrap">
                     {item.image ? (
                       <img src={item.image} alt={item.name} className="w-12 h-12 rounded object-cover" />
@@ -494,7 +587,7 @@ const EquipmentManager = () => {
       {/* View Modal */}
       {viewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={() => setViewModal(null)}>
-          <div className="bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
               <h2 className="text-xl font-bold text-gray-800">Equipment Details</h2>
               <button
@@ -562,7 +655,7 @@ const EquipmentManager = () => {
                   handleEdit(viewModal);
                   setViewModal(null);
                 }}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition"
               >
                 Edit Equipment
               </button>
@@ -576,6 +669,35 @@ const EquipmentManager = () => {
           </div>
         </div>
       )}
+
+      {/* CSS animations */}
+      <style>{`
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        
+        @keyframes slideOutRight {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+        
+        .animate-slide-in-right {
+          animation: slideInRight 0.3s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 };
