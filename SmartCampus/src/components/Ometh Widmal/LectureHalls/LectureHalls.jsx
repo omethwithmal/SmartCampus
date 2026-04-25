@@ -9,7 +9,7 @@ import {
   FaBookmark, FaShare, FaInfoCircle, FaArrowRight, FaFlask,
   FaLaptopCode, FaClipboardList, FaCouch, FaRegSun,
   FaRegSnowflake, FaServer, FaDoorOpen, FaCode, FaShieldAlt,
-  FaWind, FaMicrochip, FaCoffee, FaSpinner
+  FaWind, FaMicrochip, FaCoffee, FaSpinner, FaTools
 } from 'react-icons/fa';
 import { MdOutlineMeetingRoom, MdOutlineScreenShare, MdOutlineScience } from 'react-icons/md';
 import { GiWhiteBook, GiMechanicalArm } from 'react-icons/gi';
