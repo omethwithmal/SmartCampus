@@ -54,28 +54,28 @@ const Home = () => {
       title: 'Lecture Halls',
       description: 'Book spacious lecture halls equipped with modern teaching facilities for your classes and seminars.',
       icon: FaChalkboard,
-      path: '/resources/lecture-halls',
+      path: '/LectureHalls',
       color: 'from-indigo-500 to-indigo-600'
     },
     {
       title: 'Labs',
       description: 'Access well-equipped science and computer labs for practical sessions and research work.',
       icon: FaFlask,
-      path: '/resources/labs',
+      path: '/LectureHalls',
       color: 'from-cyan-500 to-cyan-600'
     },
     {
       title: 'Meeting Rooms',
       description: 'Reserve comfortable meeting rooms for group discussions, project meetings, and study sessions.',
       icon: FaChair,
-      path: '/resources/meeting-rooms',
+      path: '/LectureHalls',
       color: 'from-amber-500 to-amber-600'
     },
     {
       title: 'Equipment',
       description: 'Borrow professional equipment including projectors, cameras, audio systems, and more for your academic needs.',
       icon: FaVideoCamera,
-      path: '/resources/equipment',
+      path: '/Equipment',
       color: 'from-rose-500 to-rose-600'
     }
   ];
