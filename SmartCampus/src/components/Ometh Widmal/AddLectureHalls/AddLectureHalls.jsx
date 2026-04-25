@@ -5,8 +5,10 @@ import {
   MapPin, Calendar, ChevronDown, ChevronUp, LayoutDashboard,
   Users, Home, Info, Upload, Image as ImageIcon,
   TrendingUp, TrendingDown, BarChart3, PieChart as PieChartIcon,
-  Activity, Clock, Building2, CalendarDays, Sparkles, Loader
+  Activity, Clock, Building2, CalendarDays, Sparkles, Loader,
+  Settings, Wrench, Package // Changed: Added Package and Wrench instead of Tool
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Import recharts components
 import {
@@ -42,6 +44,8 @@ const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat
 const CHART_COLORS = ['#1E3A8A', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD'];
 
 const LectureHallsDashboard = () => {
+  const navigate = useNavigate(); // Add navigation hook
+  
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -568,14 +572,24 @@ const LectureHallsDashboard = () => {
                 <p className="text-sm text-gray-500">Manage lecture halls, meeting rooms, and laboratories</p>
               </div>
             </div>
-            <button
-              onClick={handleAddNew}
-              disabled={apiLoading}
-              className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-700 to-blue-600 text-white rounded-xl hover:from-blue-800 hover:to-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
-            >
-              <Plus size={18} />
-              Add New Room
-            </button>
+            <div className="flex items-center gap-3">
+              {/* EQUIPMENT MANAGER BUTTON - Fixed with Package icon */}
+              <button
+                onClick={() => navigate('/EquipmentManager')}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all shadow-md hover:shadow-lg"
+              >
+                <Package size={18} />
+                Equipment Manager
+              </button>
+              <button
+                onClick={handleAddNew}
+                disabled={apiLoading}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-700 to-blue-600 text-white rounded-xl hover:from-blue-800 hover:to-blue-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50"
+              >
+                <Plus size={18} />
+                Add New Room
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -642,7 +656,7 @@ const LectureHallsDashboard = () => {
 
           {/* Charts Row 1 */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Weekly Usage Trend - Same as before */}
+            {/* Weekly Usage Trend */}
             <div className="bg-white rounded-2xl shadow-sm p-5 border border-gray-100">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="font-semibold text-gray-800 flex items-center gap-2">
@@ -930,7 +944,7 @@ const LectureHallsDashboard = () => {
         </div>
       </div>
 
-      {/* View Modal - Keep same */}
+      {/* View Modal */}
       {isViewModalOpen && viewingRoom && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -951,7 +965,7 @@ const LectureHallsDashboard = () => {
         </div>
       )}
 
-      {/* Add/Edit Modal - Same as before */}
+      {/* Add/Edit Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -962,7 +976,6 @@ const LectureHallsDashboard = () => {
               </button>
             </div>
             <div className="p-6">
-              {/* Form fields same as before */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium mb-1">Name *</label>
