@@ -1,6 +1,6 @@
 // components/EquipmentManager.js
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   PlusCircle, 
   Edit, 
@@ -19,10 +19,12 @@ import {
   Package,
   AlertTriangle,
   Info,
-  RefreshCw
+  RefreshCw,
+  QrCode
 } from 'lucide-react';
 
 const EquipmentManager = () => {
+  const navigate = useNavigate();
   const [equipmentList, setEquipmentList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -66,6 +68,11 @@ const EquipmentManager = () => {
     setTimeout(() => {
       setPopupMessage({ show: false, message: '', type: '' });
     }, 3000);
+  };
+
+  // Navigate to Google Sheet Table page
+  const handleViewQRData = () => {
+    navigate('/GoogleSheetTable');
   };
 
   // Fetch all equipment from backend
@@ -352,6 +359,15 @@ const EquipmentManager = () => {
           <p className="text-gray-500 mt-1">Manage and track all your equipment inventory</p>
         </div>
         <div className="flex gap-3">
+          {/* New View QR Data Button */}
+          <button
+            onClick={handleViewQRData}
+            className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-5 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
+            title="View QR Data"
+          >
+            <QrCode size={18} />
+            View QR Data
+          </button>
           <button
             onClick={refreshData}
             className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-lg"
@@ -620,7 +636,7 @@ const EquipmentManager = () => {
                       {getCategoryIcon(item.category)}
                       <span>{item.category}</span>
                     </div>
-                   </td>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs rounded-full font-medium ${
                       item.status === 'AVAILABLE' 
@@ -629,7 +645,7 @@ const EquipmentManager = () => {
                     }`}>
                       {item.status}
                     </span>
-                   </td>
+                  </td>
                   <td className="px-6 py-4 max-w-xs truncate text-gray-600">{item.description}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex gap-2">
@@ -655,15 +671,15 @@ const EquipmentManager = () => {
                         <Trash2 size={18} />
                       </button>
                     </div>
-                   </td>
-                 </tr>
+                  </td>
+                </tr>
               ))}
               {equipmentList.length === 0 && !loading && (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
                     No equipment found. Click "Add New Equipment" to get started.
-                   </td>
-                 </tr>
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

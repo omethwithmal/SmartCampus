@@ -15,6 +15,7 @@ import AddLectureHalls from "./components/Ometh Widmal/AddLectureHalls/AddLectur
 import QuickAnalyze from "./components/Ometh Widmal/QuickAnalyze/QuickAnalyze";
 import LabsAnalyzeDashboard from "./components/Ometh Widmal/LabsAnalyzeDashboard/LabsAnalyzeDashboard";
 import EquipmentManager from "./components/Ometh Widmal/EquipmentManager/EquipmentManager";
+import GoogleSheetTable from "./components/Ometh Widmal/GoogleSheetTable/GoogleSheetTable"; 
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
       <Route path="/LectureHalls" element={<LectureHalls />} />
       <Route path="/AddLectureHalls" element={<AddLectureHalls />} />
       <Route path="/EquipmentManager" element={<EquipmentManager />} />
+      <Route path="/GoogleSheetTable" element={<GoogleSheetTable />} />
       
 
 
