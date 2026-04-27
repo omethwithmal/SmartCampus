@@ -79,7 +79,7 @@ const EquipmentManager = () => {
   const fetchEquipment = async () => {
     setLoading(true);
     try {
-      const response = await fetch(API_BASE_URL);
+      const response = await fetch( _BASE_URL);
       if (response.ok) {
         const data = await response.json();
         setEquipmentList(data);
